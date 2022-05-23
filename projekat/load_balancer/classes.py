@@ -3,13 +3,19 @@ import socket
 
 
 class LoadBalancer:
-    def __init__(self,server_client_address):
+    def __init__(self,server_client_address,server_worker_address):
         self.server_client_address = server_client_address
+        self.server_worker_address = server_worker_address
         self.buffer = []
         self.client_connections = []
+        self.worker_connections = []
+        self.worker_availabilty = []
         self.client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         self.client_socket.bind(self.server_client_address)
         self.client_socket.listen(1)
+        self.worker_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        self.worker_socket.bind(self.server_worker_address)
+        self.worker_socket.listen(1)
 
     def start_listening_clients(self):
         print('Listening for client rquests')
@@ -19,6 +25,15 @@ class LoadBalancer:
                 self.client_connections.append(connection)
                 new_thread = Thread(target=self.handle_client, args=(connection,client_address))
                 new_thread.start()
+        except:
+            exit()
+
+    def start_listening_workers(self):
+        try:
+            while True:
+                connection, worker_address = self.worker_socket.accept()
+                self.worker_connections.append(connection)
+                self.worker_availabilty.append(True)
         except:
             exit()
 
@@ -55,4 +70,8 @@ class LoadBalancer:
                 break
         for x in self.client_connections:
             x.close()
-        # TO DO : close worker connections
+        self.client_connections.clear()
+        for x in self.worker_connections:
+            x.close()
+        self.worker_connections.clear()
+        self.worker_availabilty.clear()

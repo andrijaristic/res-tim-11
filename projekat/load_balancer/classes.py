@@ -52,24 +52,7 @@ class LoadBalancer:
                         if(index == -1):
                             reply = "No available workers"
                         else:
-                            worker = self.worker_connections[index]
-                            message = ""
-                            for i in range(len(self.buffer)):
-                                if(i == len(self.buffer) - 1):
-                                    message += self.buffer[i]
-                                else:
-                                    message += self.buffer[i] + ";"
-                            message = message.encode()
-                            worker.sendall(message)
-                            self.worker_availabilty[index] = False
-                            data = worker.recv(1024)
-                            if(data):
-                                self.worker_availabilty[index] = True
-                            else:
-                                reply = "Error"
-                                worker.close()
-                                self.worker_connections.remove(worker)
-                                del self.worker_availabilty[index]
+                            reply = self.send_data_to_worker(index)
                     reply = reply.encode()
                     connection.sendto(reply,client_address)
                 elif(command.lower() == "exit"):
@@ -83,7 +66,19 @@ class LoadBalancer:
                     reply = "New worker started working"
                     reply = reply.encode()
                     connection.sendto(reply,client_address)
-                # TO DO : add cases for other command types
+                elif(command.lower() == "off"):
+                    index = self.find_available_worker()
+                    reply = "Worker turned off"
+                    if(index == -1):
+                        reply = "No available workers"
+                    else:
+                        self.turn_off_worker(index)
+                    reply = reply.encode()
+                    connection.sendto(reply,client_address)
+                else:
+                    reply = "Unknown command"
+                    reply = reply.encode()
+                    connection.sendto(reply,client_address)
             else:
                 connection.close()
                 self.client_connections.remove(connection)
@@ -94,6 +89,39 @@ class LoadBalancer:
             if(self.worker_availabilty[i]):
                 return i
         return -1
+
+    def turn_off_worker(self,index):
+        self.worker_connections[index].close()
+        del self.worker_connections[index]
+        del self.worker_availabilty[index]
+
+    def send_data_to_worker(self,index):
+        worker = self.worker_connections[index]
+        message = self.convert_data_to_message()
+        message = message.encode()
+        worker.sendall(message)
+        self.worker_availabilty[index] = False
+        reply = ""
+        data = worker.recv(1024)
+        if(data):
+            self.worker_availabilty[index] = True
+            reply = "Data sent to worker"
+        else:
+            reply = "Error"
+            worker.close()
+            self.worker_connections.remove(worker)
+            del self.worker_availabilty[index]
+        return reply
+
+    def convert_data_to_message(self):
+        message = ""
+        for i in range(len(self.buffer)):
+            if(i == len(self.buffer) - 1):
+                message += self.buffer[i]
+            else:
+                message += self.buffer[i] + ";"
+        self.buffer.clear()
+        return message;
 
     def close_all_connections(self):
         while True:

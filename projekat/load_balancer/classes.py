@@ -47,11 +47,31 @@ class LoadBalancer:
                     command_parameters = message.split("-")[1] + "-" + message.split("-")[2]
                     self.buffer.append(command_parameters)
                     reply = "Primljeno"
+                    if(len(self.buffer) == 10):
+                        index = self.find_available_worker()
+                        if(index == -1):
+                            reply = "No available workers"
+                        else:
+                            worker = self.worker_connections[index]
+                            message = ""
+                            for i in range(len(self.buffer)):
+                                if(i == len(self.buffer) - 1):
+                                    message += self.buffer[i]
+                                else:
+                                    message += self.buffer[i] + ";"
+                            message = message.encode()
+                            worker.sendall(message)
+                            self.worker_availabilty[index] = False
+                            data = worker.recv(1024)
+                            if(data):
+                                self.worker_availabilty[index] = True
+                            else:
+                                reply = "Greska"
+                                worker.close()
+                                self.worker_connections.remove(worker)
+                                del self.worker_availabilty[index]
                     reply = reply.encode()
                     connection.sendto(reply,client_address)
-                    if(len(self.buffer) == 10):
-                        # TO DO : send data to worker
-                            pass
                 elif(command.lower() == "exit"):
                     connection.close()
                     self.client_connections.remove(connection)

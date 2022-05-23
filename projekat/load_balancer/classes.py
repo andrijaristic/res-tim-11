@@ -65,8 +65,8 @@ class LoadBalancer:
     def find_available_worker(self):
         for i in range(len(self.worker_availabilty)):
             if(self.worker_availabilty[i]):
-                return self.worker_connections[i]
-        return None
+                return i
+        return -1
 
     def close_all_connections(self):
         while True:

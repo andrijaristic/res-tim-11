@@ -51,7 +51,7 @@ class LoadBalancer:
                     connection.sendto(reply,client_address)
                     if(len(self.buffer) == 10):
                         # TO DO : send data to worker
-                        pass
+                            pass
                 elif(command.lower() == "exit"):
                     connection.close()
                     self.client_connections.remove(connection)
@@ -62,6 +62,11 @@ class LoadBalancer:
                 self.client_connections.remove(connection)
                 break
 
+    def find_available_worker(self):
+        for i in range(len(self.worker_availabilty)):
+            if(self.worker_availabilty[i]):
+                return self.worker_connections[i]
+        return None
 
     def close_all_connections(self):
         while True:

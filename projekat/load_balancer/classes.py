@@ -1,6 +1,6 @@
 from threading import Thread
 import socket
-
+import os
 
 class LoadBalancer:
     def __init__(self,server_client_address,server_worker_address):
@@ -46,7 +46,7 @@ class LoadBalancer:
                 if(command.lower() == "send"):
                     command_parameters = message.split("-")[1] + "-" + message.split("-")[2]
                     self.buffer.append(command_parameters)
-                    reply = "Primljeno"
+                    reply = "Data stored"
                     if(len(self.buffer) == 10):
                         index = self.find_available_worker()
                         if(index == -1):
@@ -66,7 +66,7 @@ class LoadBalancer:
                             if(data):
                                 self.worker_availabilty[index] = True
                             else:
-                                reply = "Greska"
+                                reply = "Error"
                                 worker.close()
                                 self.worker_connections.remove(worker)
                                 del self.worker_availabilty[index]
@@ -76,6 +76,13 @@ class LoadBalancer:
                     connection.close()
                     self.client_connections.remove(connection)
                     break
+                elif(command.lower() == "on"):
+                    dir = os.path.dirname(__file__)
+                    file_name = os.path.join(dir,'..','worker','worker.py')
+                    os.system(file_name)
+                    reply = "New worker started working"
+                    reply = reply.encode()
+                    connection.sendto(reply,client_address)
                 # TO DO : add cases for other command types
             else:
                 connection.close()

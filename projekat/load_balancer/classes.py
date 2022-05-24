@@ -1,6 +1,7 @@
 from threading import Thread
 import socket
 import os
+import threading
 
 class LoadBalancer:
     def __init__(self,server_client_address,server_worker_address):
@@ -16,6 +17,7 @@ class LoadBalancer:
         self.worker_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         self.worker_socket.bind(self.server_worker_address)
         self.worker_socket.listen(1)
+        self.mutex = threading.Semaphore(1)
 
     def start_listening_clients(self):
         print('Listening for client requests')
@@ -44,7 +46,8 @@ class LoadBalancer:
                 message = data.decode()
                 command = message.split("-")[0]
                 if(command.lower() == "send"):
-                    command_parameters = message.split("-")[1] + "-" + message.split("-")[2]
+                    self.mutex.acquire()
+                    command_parameters = message.split("-")[1] + "-" + message.split("-")[2] + "-" + message.split("-")[3]
                     data_stored = False
                     if(len(self.buffer) < 10):
                         self.buffer.append(command_parameters)
@@ -58,6 +61,7 @@ class LoadBalancer:
                             reply = self.send_data_to_worker(index)
                             if(data_stored == False):
                                 self.buffer.append(command_parameters)
+                    self.mutex.release()
                     reply = reply.encode()
                     connection.sendto(reply,client_address)
                 elif(command.lower() == "exit"):

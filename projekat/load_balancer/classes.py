@@ -18,7 +18,7 @@ class LoadBalancer:
         self.worker_socket.listen(1)
 
     def start_listening_clients(self):
-        print('Listening for client rquests')
+        print('Listening for client requests')
         try:
             while True:
                 connection, client_address = self.client_socket.accept()
@@ -67,7 +67,8 @@ class LoadBalancer:
                 elif(command.lower() == "on"):
                     dir = os.path.dirname(__file__)
                     file_name = os.path.join(dir,'..','worker','worker.py')
-                    os.system(file_name)
+                    os_thread = Thread(target=self.start_worker, args=(file_name,))
+                    os_thread.start()
                     reply = "New worker started working"
                     reply = reply.encode()
                     connection.sendto(reply,client_address)
@@ -127,6 +128,9 @@ class LoadBalancer:
                 message += self.buffer[i] + ";"
         self.buffer.clear()
         return message;
+
+    def start_worker(self, file_name):
+        os.system(file_name)
 
     def close_all_connections(self):
         while True:

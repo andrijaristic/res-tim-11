@@ -135,6 +135,9 @@ class LoadBalancer:
     def close_all_connections(self):
         while True:
             message = input()
+            if(len(self.client_connections) != 0):
+                print('There are clients connected to the load balancer')
+                continue
             if(message.lower() == 'end'):
                 break
         for x in self.client_connections:

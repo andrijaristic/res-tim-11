@@ -45,14 +45,19 @@ class LoadBalancer:
                 command = message.split("-")[0]
                 if(command.lower() == "send"):
                     command_parameters = message.split("-")[1] + "-" + message.split("-")[2]
-                    self.buffer.append(command_parameters)
-                    reply = "Data stored"
+                    data_stored = False
+                    if(len(self.buffer) < 10):
+                        self.buffer.append(command_parameters)
+                        reply = "Data stored"
+                        data_stored = True
                     if(len(self.buffer) == 10):
                         index = self.find_available_worker()
                         if(index == -1):
                             reply = "No available workers"
                         else:
                             reply = self.send_data_to_worker(index)
+                            if(data_stored == False):
+                                self.buffer.append(command_parameters)
                     reply = reply.encode()
                     connection.sendto(reply,client_address)
                 elif(command.lower() == "exit"):

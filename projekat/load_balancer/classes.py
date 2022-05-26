@@ -46,9 +46,9 @@ class LoadBalancer:
                 message = data.decode()
                 command = message.split("-")[0]
                 if(command.lower() == "send"):
-                    self.mutex.acquire()
                     command_parameters = message.split("-")[1] + "-" + message.split("-")[2] + "-" + message.split("-")[3]
                     data_stored = False
+                    self.mutex.acquire()
                     if(len(self.buffer) < 10):
                         self.buffer.append(command_parameters)
                         reply = "Data stored"
@@ -60,6 +60,7 @@ class LoadBalancer:
                         else:
                             reply = self.send_data_to_worker(index)
                             if(data_stored == False):
+                                self.mutex.acquire()
                                 self.buffer.append(command_parameters)
                     self.mutex.release()
                     reply = reply.encode()
@@ -77,12 +78,16 @@ class LoadBalancer:
                     reply = reply.encode()
                     connection.sendto(reply,client_address)
                 elif(command.lower() == "off"):
-                    index = self.find_available_worker()
-                    reply = "Worker turned off"
-                    if(index == -1):
-                        reply = "No available workers"
-                    else:
-                        self.turn_off_worker(index)
+                    reply = "Cannot turn off workers while they are working"
+                    self.mutex.acquire()
+                    if(self.all_workers_available()):
+                        index = self.find_available_worker()
+                        reply = "Worker turned off"
+                        if(index == -1):
+                            reply = "No available workers"
+                        else:
+                            self.turn_off_worker(index)
+                    self.mutex.release()
                     reply = reply.encode()
                     connection.sendto(reply,client_address)
                 else:
@@ -131,10 +136,17 @@ class LoadBalancer:
             else:
                 message += self.buffer[i] + ";"
         self.buffer.clear()
+        self.mutex.release()
         return message;
 
     def start_worker(self, file_name):
         os.system(file_name)
+
+    def all_workers_available(self):
+        for available in self.worker_availabilty:
+            if (available == False):
+                return False
+        return True
 
     def close_all_connections(self):
         while True:

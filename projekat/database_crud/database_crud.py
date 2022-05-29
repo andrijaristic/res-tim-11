@@ -1,12 +1,25 @@
 from threading import Thread
 from connections import *
 from classes import Database
+from crud_operations import *
 import pyodbc
+
+def meni():
+    print("\n================")
+    print("1. Update row")
+    print("2. Delete row")
+    print("X. Exit")
+    print("================")
 
 def terminal_input(cnxn):
     while True:
-        temp = input()
-        if (temp == "x"):
+        meni()
+        temp = input("Option: ")
+        if (temp == "1"):
+            update_brojilo_info(cnxn)
+        elif (temp == "2"):
+            delete_brojilo_info(cnxn)
+        elif (temp.lower() == "x"):
             exit()
 
 

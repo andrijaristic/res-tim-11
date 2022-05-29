@@ -1,5 +1,7 @@
 from threading import Thread
 import socket
+from crud_operations import *
+from time import sleep
 
 class Database:
     def __init__(self, worker_listening_address, analytics_listening_address, cnxn_str):
@@ -39,11 +41,19 @@ class Database:
 
             if(data):
                 message = data.decode()
-                print(message)
-                #id = message.split("-")[0]
-                #value = message.split("-")[1]
-                #date = message.split("-")[2]
-                # Pozove CREATE metodu.
+                #print(message)
+                # Podeli po ; prvo.
+                buffer = []
+                buffer = message.split(";")
+
+                for message in buffer:
+                    id = message.split("-")[0]
+                    value = message.split("-")[1]
+                    date = message.split("-")[2]
+                    #print(f"{id}-{value}-{date}")
+                    # Pozove CREATE metodu.
+                    create_brojilo_potrosnja(self.conn_str, id, value, date)
+                    sleep(1)
             else:
                 connection.close()
                 break
@@ -54,8 +64,15 @@ class Database:
 
             if(data):
                 message = data.decode()
-                print(message)
-                # Smisliti izgled poruke koja ce biti poslata.
+                field = message.split(":")[0]
+                value = message.split(":")[1]
+                if (field.lower() == "brojilo"):
+                    response = read_brojilo_potrosnja_id(self.conn_str, value)
+                elif (field.lower() == "grad"):
+                    response = read_brojilo_potrosnja_grad(self.conn_str, value)
+
+                response = response.encode()
+                connection.sendto(response, analytics_address)
             else:
                 connection.close()
                 break

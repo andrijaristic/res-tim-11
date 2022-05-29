@@ -5,23 +5,25 @@ from crud_operations import *
 import pyodbc
 
 def meni():
-    print("\n================")
-    print("1. Update row")
+    print("\n=======================")
+    print("1. Create row")
     print("2. Delete row")
+    print("3. Update row") 
     print("X. Exit")
-    print("================")
+    print("=======================")
 
 def terminal_input(cnxn):
     while True:
         meni()
         temp = input("Option: ")
         if (temp == "1"):
-            update_brojilo_info(cnxn)
+            create_brojilo_info(cnxn)
         elif (temp == "2"):
             delete_brojilo_info(cnxn)
+        elif (temp == "3"):
+            update_brojilo_info(cnxn)
         elif (temp.lower() == "x"):
             exit()
-
 
 def main():
     try:
@@ -30,7 +32,6 @@ def main():
     except:
         connection_str = connect_to()
         cnxn = pyodbc.connect(connection_str)
-
 
     worker_listening_address = ('localhost', 22000)
     analytics_listening_address = ('localhost', 23000)

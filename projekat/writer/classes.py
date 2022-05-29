@@ -13,7 +13,7 @@ class Writer:
                 komanda = int(input())
                 poruka = ""
                 if(komanda == 1):
-                    poruka = ""
+                    poruka = self.input_and_validate_data()
                 elif(komanda == 2):
                     poruka = "On-0"
                 elif(komanda == 3):
@@ -32,11 +32,25 @@ class Writer:
                         print(poruka)
                     else:
                         self.sock.close()
-                        break   
+                        break    
             except ValueError:
                 print("Morate uneti broj")
             except:
                 print("Greska! Poruka nije uspesno poslata!")
 
-    
+    def input_and_validate_data(self):
+        try:
+            print("Unesite ID brojila: ",end="")
+            id = int(input())
+            print("Unesite vrednost: ",end="")
+            value = int(input())
+            e = datetime.datetime.now()
+            datum = e.strftime("%d.%m.%Y")
+            return "Send-" + str(id) + "-" + str(value) + "-" + str(datum)
+        except ValueError:
+            print("Greska. Vrednosti moraju biti celobrojne.")
+            return ""
+        except:
+            print("Greska!")
+            return ""
 

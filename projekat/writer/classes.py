@@ -15,11 +15,11 @@ class Writer:
                 if(komanda == 1):
                     poruka = ""
                 elif(komanda == 2):
-                    poruka = ""
+                    poruka = "On-0"
                 elif(komanda == 3):
-                    poruka = ""
+                    poruka = "Off-0"
                 elif(komanda == 4):
-                    poruka = ""
+                    poruka = "Exit-0"
                 else:
                     print("Zadata komanda ne postoji!")
                    

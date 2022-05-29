@@ -1,7 +1,9 @@
 import os
 
 def add_database():
-    db_path = os.path.abspath("Brojila.mdf")
+    #db_path = os.path.path("Brojila.mdf")
+    dir = os.path.dirname(__file__)
+    db_path = os.path.join(dir, 'Brojila.mdf')
     connection_str = (
         r'DRIVER=ODBC Driver 17 for SQL Server;'
         r'SERVER=.\SQLEXPRESS;'

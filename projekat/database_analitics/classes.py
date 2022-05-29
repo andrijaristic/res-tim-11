@@ -27,6 +27,17 @@ class DatabaseAnalytics:
                 fajl = open(nazivfajla, 'w+')
                 self.upisiufajlgrad(fajl, grad, data2)
                 print('Uspesan upis')
+            elif komanda == '2':
+                print('Unesite brojilo:')
+                brojilo = input()
+                message = 'brojilo:' + brojilo
+                data = message.encode()
+                self.databasecrud_socket.sendall(data)
+                data2 = self.databasecrud_socket.recv(1024)
+                nazivfajla = 'izvestaj' + brojilo + '.txt'
+                fajl = open(nazivfajla, 'w+')
+                self.upisiufajlbrojilo(fajl, brojilo, data2)
+                print('Uspesan upis')
             else:
                 exit()
 
@@ -44,4 +55,11 @@ class DatabaseAnalytics:
             t = linija.split('-')
             fajl.write(' ' + t[0] + '      ' + t[1] + '\n')
 
-
+    def upisiufajlbrojilo(self, fajl, brojilo, data):
+        data = data.decode()
+        fajl.write('Izvestaj za brojilo : ' + brojilo + '\n')
+        fajl.write('Mesec  Potrosnja \n')
+        linije = data.split(';')
+        for linija in linije:
+            t = linija.split('-')
+            fajl.write(' ' + t[0] + '      ' + t[1] + '\n')

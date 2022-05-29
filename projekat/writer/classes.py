@@ -22,7 +22,17 @@ class Writer:
                     poruka = "Exit-0"
                 else:
                     print("Zadata komanda ne postoji!")
-                   
+                if(poruka != ""):                             
+                    self.sock.connect(self.server_adresa)
+                    poruka = poruka.encode()
+                    self.sock.sendall(poruka)
+                    odgovor = self.sock.recv(1024)
+                    if(odgovor):
+                        poruka = odgovor.decode()
+                        print(poruka)
+                    else:
+                        self.sock.close()
+                        break   
             except ValueError:
                 print("Morate uneti broj")
             except:

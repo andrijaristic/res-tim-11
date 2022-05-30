@@ -54,6 +54,7 @@ class DatabaseAnalytics:
         for linija in linije:
             t = linija.split('-')
             fajl.write(' ' + t[0] + '      ' + t[1] + '\n')
+        fajl.close()
 
     def upisiufajlbrojilo(self, fajl, brojilo, data):
         data = data.decode()
@@ -63,3 +64,4 @@ class DatabaseAnalytics:
         for linija in linije:
             t = linija.split('-')
             fajl.write(' ' + t[0] + '      ' + t[1] + '\n')
+        fajl.close()

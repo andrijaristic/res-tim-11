@@ -125,9 +125,9 @@ class LoadBalancer:
 
     def generate_off_reply(self,all_workers_available,worker_turned_off):
         if type(all_workers_available) != bool:
-            raise TypeError('worker_started must be a bool')
+            raise TypeError('all_workers_available must be a bool')
         if type(worker_turned_off) != bool:
-            raise TypeError('worker_started must be a bool')
+            raise TypeError('worker_turned_off must be a bool')
         reply = ""
         if(all_workers_available == False):
             reply = "Cannot turn off workers while they are working"
@@ -182,10 +182,6 @@ class LoadBalancer:
 
     def turn_off_worker(self,index,worker_connections,worker_availabilty):
         try:
-            if type(index) != int:
-                raise TypeError('Index must be an integer')
-            if(index == -1):
-                raise IndexError('Index out of range')
             worker = worker_connections[index]
             del worker_connections[index]
             del worker_availabilty[index]

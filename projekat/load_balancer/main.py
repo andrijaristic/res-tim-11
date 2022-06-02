@@ -1,5 +1,5 @@
 from json import load
-from classes import LoadBalancer
+from load_balancer import LoadBalancer
 from threading import Thread
 
 if __name__ == '__main__':

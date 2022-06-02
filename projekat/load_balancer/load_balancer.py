@@ -98,9 +98,13 @@ class LoadBalancer:
         return data.decode()
 
     def get_command_from_message(self,message):
+        if type(message) != str:
+            raise TypeError('Message must be a string')
         return message.split("-")[0]
 
     def get_parameters_from_message(self,message):
+        if type(message) != str:
+            raise TypeError('Message must be a string')
         return message.split("-")[1] + "-" + message.split("-")[2] + "-" + message.split("-")[3]
 
     def generate_send_reply(self,data_stored,local_buffer):
@@ -152,6 +156,8 @@ class LoadBalancer:
         return True
         
     def send_reply_to_client(self,connection,client_address,reply):
+        if type(reply) != bytes:
+            raise TypeError("Reply must be bytes")
         try:
             connection.sendto(reply,client_address)
             return True
@@ -167,6 +173,8 @@ class LoadBalancer:
             return False
 
     def start_worker(self,file_name):
+        if type(file_name) != str:
+            raise TypeError('file_name must be a string')
         try:
             os_thread = Thread(target=self.start_worker_app, args=(file_name,))
             os_thread.start()
@@ -181,6 +189,8 @@ class LoadBalancer:
         return -1
 
     def turn_off_worker(self,index,worker_connections,worker_availabilty):
+        if type(index) != int:
+            raise TypeError('Index must be an integer')
         try:
             worker = worker_connections[index]
             del worker_connections[index]
@@ -226,6 +236,8 @@ class LoadBalancer:
             time.sleep(1)
             
     def send_message_to_worker(self,index,worker,worker_availabilty,message):
+        if type(message) != bytes:
+            raise TypeError("message must be bytes")
         try:
             worker.sendall(message)
             worker_availabilty[index] = False
@@ -260,20 +272,17 @@ class LoadBalancer:
         return True
 
     def close_all_connections(self, client_connections,worker_connections,worker_availabilty):
-        try:
-            while True:
-                message = input()
-                if(len(client_connections) != 0):
-                    print('There are clients connected to the load balancer')
-                    continue
-                if(message.lower() == 'end'):
-                    break
-            for x in client_connections:
-                x.close()
-            client_connections.clear()
-            for x in worker_connections:
-                x.close()
-            worker_connections.clear()
-            worker_availabilty.clear()
-        except:
-            exit()
+        while True:
+            message = input()
+            if(len(client_connections) != 0):
+                print('There are clients connected to the load balancer')
+                continue
+            if(message.lower() == 'end'):
+                break
+        for x in client_connections:
+            x.close()
+        client_connections.clear()
+        for x in worker_connections:
+            x.close()
+        worker_connections.clear()
+        worker_availabilty.clear()

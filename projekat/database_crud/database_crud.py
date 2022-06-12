@@ -41,8 +41,6 @@ class Database:
 
             if(data):
                 message = data.decode()
-                #print(message)
-                # Podeli po ; prvo.
                 buffer = []
                 buffer = message.split(";")
 
@@ -50,8 +48,6 @@ class Database:
                     id = message.split("-")[0]
                     value = message.split("-")[1]
                     date = message.split("-")[2]
-                    #print(f"{id}-{value}-{date}")
-                    # Pozove CREATE metodu.
                     create_brojilo_potrosnja(self.conn_str, id, value, date)
                     sleep(1)
             else:

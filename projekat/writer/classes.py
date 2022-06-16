@@ -5,6 +5,7 @@ class Writer:
     def __init__(self, server_adresa):
         self.server_adresa = server_adresa
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.connect(self.server_adresa)
 
     def run(self):
         while(True):
@@ -22,8 +23,7 @@ class Writer:
                     poruka = "Exit-0"
                 else:
                     print("Zadata komanda ne postoji!")
-                if(poruka != ""):                             
-                    self.sock.connect(self.server_adresa)
+                if(poruka != ""):                                               
                     poruka = poruka.encode()
                     self.sock.sendall(poruka)
                     odgovor = self.sock.recv(1024)
@@ -45,8 +45,8 @@ class Writer:
             print("Unesite vrednost: ",end="")
             value = int(input())
             e = datetime.datetime.now()
-            datum = e.strftime("%d.%m.%Y")
-            return "Send-" + str(id) + "-" + str(value) + "-" + str(datum)
+            datum_vreme = e.strftime("%d.%m.%Y;%H:%M:%S")
+            return "Send-" + str(id) + "-" + str(value) + "-" + str(datum_vreme)
         except ValueError:
             print("Greska. Vrednosti moraju biti celobrojne.")
             return ""

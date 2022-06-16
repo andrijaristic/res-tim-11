@@ -1,4 +1,3 @@
-
 monthsName = {
     "January" : 1,
     "February" : 2,
@@ -29,126 +28,106 @@ monthsNumber = {
     12 : "December"       
 }
 
-def input_params():
-    ime = input("Ime: ")
-    prz = input("Prezime: ")
-    ulica = input("Ulica: ")
-    ubroj = input("Broj ulice: ")
-    pbroj = input("Postanski kod: ")
-    grad = input("Grad: ")
+def check_if_exists(cur, id):
+    cur.execute(f"SELECT * FROM Informacije WHERE id = {id}")
+    num = cur.fetchone()
+    return num
 
-    return ime, prz, ulica, ubroj, pbroj, grad
+# UPDATE
+def update_brojilo_info(cnxn, id, ime, prz, ulica, ubroj, pbroj, grad):
+    update_query = """\
+    UPDATE Informacije
+    SET
+        Ime = ?, Prz = ?, Ulica = ?, Ubroj = ?, Pbroj = ?, Grad = ?    
+    WHERE 
+        Id = ?
+    """
 
-def update_brojilo_info(conn_str):
-    cursor = conn_str.cursor()
-    count = 0
-
-    id = input("Id: ")
-    cursor.execute(f"SELECT * FROM Informacije WHERE id = {id}")
-    # Provera da li postoji id.
-    for el in cursor:
-        count += 1
+    cur = cnxn.cursor()
+    num = check_if_exists(cur, id)
     
-    if (count > 0):
-        ime, prz, ulica, ubroj, pbroj, grad = input_params()
-
-        # Drugacije Update javlja sintaksu gresku.
-        update_query = """\
-        UPDATE Informacije
-        SET
-            Ime = ?, Prz = ?, Ulica = ?, Ubroj = ?, Pbroj = ?, Grad = ?    
-        WHERE 
-            Id = ?
-        """
-
-        cursor.execute(update_query, (ime, prz, ulica, ubroj, pbroj, grad, id))
-        conn_str.commit()
+    if num != None:
+        cur.execute(update_query, (ime, prz, ulica, ubroj, pbroj, grad, id))
+        cnxn.commit()
         print(f"Uspesno azurirano brojilo [{id}]")
+        
+        return True
     else:
-        print(f"Neuspesno azuriranje! ID [{id}] ne postoji.")
+        print(f"Neuspesno azuriranje! ID [{id}] ne postoji.")  
+        return False  
 
-def delete_brojilo_info(conn_str):
-    cursor = conn_str.cursor()
-    count = 0
-
-    id = input("Id: ")
-    cursor.execute(f"SELECT * FROM Informacije WHERE id = {id}")
-    # Provera da li postoji id.
-    for el in cursor:
-        count += 1
-
-    if (count > 0):
-        cursor.execute(f"DELETE FROM Informacije WHERE id = {id}")
-        conn_str.commit()
-        print(f"Uspesno obrisano brojilo [{id}].")
+# DELETE
+def delete_brojilo_info(cnxn, id):
+    cur = cnxn.cursor()
+    num = check_if_exists(cur, id)
+    
+    if num != None:
+        try:
+            cur.execute(f"DELETE FROM Informacije WHERE id = {id}")
+            cnxn.commit()
+            print(f"Uspesno obrisano brojilo [{id}].")
+            return True
+        except:
+            print("- - - - - - - - - - - - - - - - - - - - - - - -"+
+            "\nNemoguce brisanje brojila. Vec postoje merenja.\n"+
+            "- - - - - - - - - - - - - - - - - - - - - - - -")
+            return False
     else:
-        print(f"Neuspesno brisanje! ID [{id}] ne postoji.")
+        print(f"Neuspesno brisanje! ID [{id}] ne postoji.")   
+        return False    
 
-# Novo.
-def create_brojilo_info(conn_str):
-    cursor = conn_str.cursor()
-    count = 0
+# CREATE
+def create_brojilo_info(cnxn, id, ime, prz, ulica, ubroj, pbroj, grad):
+    cur = cnxn.cursor()
+    num = check_if_exists(cur, id)
 
-    id = input("Id: ")
-
-    cursor.execute("SELECT * FROM Informacije")
-    for el in cursor:
-        count += 1
-
-    if (count > 0):
-        ime, prz, ulica, ubroj, pbroj, grad = input_params()
-        input_part = f"{id}, '{ime}', {prz}', '{ulica}', {ubroj}, {pbroj}, '{grad}'"
-        cursor.execute(f"INPUT INTO Informacije VALUES ({input_part})")
-        conn_str.commit()
+    if num == None:
+        insert_part = f"{id}, '{ime}', '{prz}', '{ulica}', {ubroj}, {pbroj}, '{grad}'"
+        cur.execute(f"INSERT INTO Informacije VALUES ({insert_part})")
+        cnxn.commit()
         print(f"Uspesno dodavanje informacije o brojilu [{id}]")
+        return True
     else:
-        print(f"Neuspelo dodavanje! ID [{id}] vec postoji.")
+        print(f"Neuspelo dodavanje! ID [{id}] vec postoji.") 
+        return False      
 
-# Novo.
-# cursor.execute(f"SELECT * FROM Informacije WHERE id = {id} AND Month(datum) = {months[mesec]}")
-def create_brojilo_potrosnja(conn_str, id, potrosnja, datum):
-    cursor = conn_str.cursor()
-    count = 0
+
+def create_brojilo_potrosnja(cnxn, id, potrosnja, datum):
+    cur = cnxn.cursor()
 
     dan = datum.split('.')[0]
     mesec = datum.split('.')[1]
     godina = datum.split('.')[2]
 
-    cursor.execute(f"SELECT * FROM Potrosnja WHERE Id = {id} AND Datum = '{godina}-{mesec}-{dan}'") 
-    for el in cursor:
-        count += 1
-#   INSERT INTO Potrosnja VALUES (2, 230.50, (convert(date, '23-February-12', 5)))
-    if (count == 0):
-        #print("Insert radimo")
-        #cursor.execute(f"INSERT INTO Potrosnja VALUES ({id}, {potrosnja}, (convert(date, '{dan}-{mesec}-{godina}', 5)))")
+    cur.execute(f"SELECT * FROM Potrosnja WHERE id = {id} AND Datum = '{godina}-{mesec}-{dan}'")
+    num = cur.fetchone()
+    if num == None:
         try:
-            cursor.execute(f"INSERT INTO Potrosnja VALUES ({id}, {potrosnja}, '{godina}-{mesec}-{dan}')")
-            conn_str.commit()
-        except:
-            print("FK-Exception")
+            cur.execute(f"INSERT INTO Potrosnja VALUES ({id}, {potrosnja}, '{godina}-{mesec}-{dan}')")
+            cnxn.commit()
+            return True
+        except Exception as ex:
+            return False
+    return False
 
-# Value = Prosledjena vrednost (Posle :)
-# Brojilo:IdBrojila || Grad:NazivGrada
-
-# Potrosnja po mesecima za konkretno brojilo.
-def read_brojilo_potrosnja_id(conn_str, value):
-    cursor = conn_str.cursor()
-    cursor.execute(f"SELECT Ptr, Month(Datum) FROM Potrosnja WHERE id = {value} Order by Month(Datum)")
+# READ
+def read_brojilo_potrosnja_id(cnxn, value):
+    cur = cnxn.cursor()
+    cur.execute(f"SELECT Ptr, Month(Datum) FROM Potrosnja WHERE id = {value} Order by Month(Datum)")
     response = ""
     
-    for ptr, mesec in cursor:
+    for ptr, mesec in cur:
         response += f"{ptr}-{monthsNumber[mesec]};"
 
     response = response[:-1]
     return response
 
-# Potrosnja po mesecima za odredjen grad.
-def read_brojilo_potrosnja_grad(conn_str, value):
-    cursor = conn_str.cursor()
-    cursor.execute(f"SELECT P.Id, Ptr, Month(Datum) FROM Potrosnja P, Informacije I WHERE P.Id = I.Id AND I.Grad = '{value}' ORDER BY Month(Datum)")
+def read_brojilo_potrosnja_grad(cnxn, value):
+    cur = cnxn.cursor()
+    cur.execute(f"SELECT P.Id, Ptr, Month(Datum) FROM Potrosnja P, Informacije I WHERE P.Id = I.Id AND I.Grad = '{value}' ORDER BY Month(Datum)")
     response = ""
     
-    for id, ptr, mesec in cursor:
+    for id, ptr, mesec in cur:
         response += f"{id}-{ptr}-{monthsNumber[mesec]};"
 
     response = response[:-1]

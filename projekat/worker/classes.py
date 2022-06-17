@@ -30,6 +30,8 @@ class Worker:
                 data2 = self.receivereply(self.database_socket)
                 if data2:
                     print(data2)
+                else:
+                    exit()
             else:
                 exit()
     def receivedata(self,sock):

@@ -16,7 +16,7 @@ class LoadBalancer:
         sock.listen(1)
         return sock
 
-    def start_listening_clients(self,client_socket,client_connections,local_buffer,worker_connections,worker_availabilty):
+    def start_listening_clients(self,client_socket,client_connections,local_buffer,worker_connections,worker_availabilty): # pragma: no cover
         print('Listening for client requests')
         try:
             while True:
@@ -27,7 +27,7 @@ class LoadBalancer:
         except:
             exit()
 
-    def start_listening_workers(self,worker_socket,worker_connections,worker_availabilty):
+    def start_listening_workers(self,worker_socket,worker_connections,worker_availabilty): # pragma: no cover
         try:
             while True:
                 connection, worker_address = worker_socket.accept()
@@ -36,7 +36,7 @@ class LoadBalancer:
         except:
             exit()
 
-    def handle_client(self,connection,client_address,client_connections,local_buffer,worker_connections,worker_availabilty):
+    def handle_client(self,connection,client_address,client_connections,local_buffer,worker_connections,worker_availabilty): # pragma: no cover
         while True:
             data = self.receive_data(connection)
             if(data):
@@ -59,7 +59,7 @@ class LoadBalancer:
                     print('Failed to close a connection')
                 elif(command.lower() == "on"):
                     dir = os.path.dirname(__file__)
-                    file_name = os.path.join(dir,'..','worker','worker.py')
+                    file_name = os.path.join(dir,'..','worker','main.py')
                     worker_started = self.start_worker(file_name)
                     reply = self.generate_on_reply(worker_started)
                     prepared_reply = self.prepare_reply(reply)
@@ -200,7 +200,7 @@ class LoadBalancer:
         except:
             return False
 
-    def check_data_for_sending(self,local_buffer,worker_connections,worker_availabilty):
+    def check_data_for_sending(self,local_buffer,worker_connections,worker_availabilty): # pragma: no cover
         while True:
             self.mutex_buffer.acquire()
             if(len(local_buffer) >= 10):
@@ -271,7 +271,7 @@ class LoadBalancer:
                 return False
         return True
 
-    def close_all_connections(self, client_connections,worker_connections,worker_availabilty):
+    def close_all_connections(self, client_connections,worker_connections,worker_availabilty): # pragma: no cover
         while True:
             message = input()
             if(len(client_connections) != 0):

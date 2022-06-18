@@ -2,13 +2,22 @@ import socket
 
 
 class DatabaseAnalytics:
-    def __init__(self, databasecrud_address):
-        self.databasecrud_address = databasecrud_address
+    def __init__(self):
         self.databasecrud_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.databasecrud_socket.connect(databasecrud_address)
-
-
-    def run(self):
+    def connecttodatabasecrud(self,databasecrud_address): # pragma: no cover 
+        try:
+            self.databasecrud_socket.connect(databasecrud_address)
+            return True
+        except:
+            return False
+    def kreirajnazivfajlagrad(self,nazivgrada):
+        x = nazivgrada.split(' ')
+        naziv = ''
+        for n in x:
+            naziv = naziv + n
+            nazivfajla = naziv + 'izvestaj.txt'
+        return nazivfajla
+    def run(self):  # pragma: no cover 
         while True:
             self.meni()
             komanda = input()
@@ -19,13 +28,12 @@ class DatabaseAnalytics:
                 data = message.encode()
                 self.databasecrud_socket.sendall(data)
                 data2 = self.databasecrud_socket.recv(1024)
-                x = grad.split(' ')
-                naziv = ''
-                for n in x:
-                    naziv = naziv + n
-                nazivfajla = naziv + 'izvestaj.txt'
-                fajl = open(nazivfajla, 'w+')
-                self.upisiufajlgrad(fajl, grad, data2)
+                p = data2.decode()
+                if(p=='Merenja ne postoje'):
+                    print('Merenja ne postoje')
+                    continue
+                nazivfajla = self.kreirajnazivfajlagrad(grad)
+                self.upisiufajlgrad(nazivfajla, grad, data2)
                 print('Uspesan upis')
             elif komanda == '2':
                 print('Unesite brojilo:')
@@ -34,19 +42,26 @@ class DatabaseAnalytics:
                 data = message.encode()
                 self.databasecrud_socket.sendall(data)
                 data2 = self.databasecrud_socket.recv(1024)
+                p = data2.decode()
+                if(p=='Merenja ne postoje'):
+                    print('Merenja ne postoje')
+                    continue
                 nazivfajla = 'izvestaj' + brojilo + '.txt'
-                fajl = open(nazivfajla, 'w+')
-                self.upisiufajlbrojilo(fajl, brojilo, data2)
+                self.upisiufajlbrojilo(nazivfajla, brojilo, data2)
                 print('Uspesan upis')
-            else:
+            elif komanda == '3':
                 exit()
+            else:
+                print('Pogresna komanda')
+                continue
 
-    def meni(self):
+    def meni(self): # pragma: no cover
         print('1 - Izvestaj o potrosnji po mesecima za odredjeni grad')
         print('2 - Izvestaj o potrosnji po mesecima za odredjeno brojilo')
         print('3 - Izlaz')
 
-    def upisiufajlgrad(self, fajl, grad, data):
+    def upisiufajlgrad(self, nazivfajla, grad, data): 
+        fajl = open(nazivfajla, 'w+')
         data = data.decode()
         fajl.write('Izvestaj za grad : ' + grad + '\n')
         fajl.write('Mesec  Potrosnja \n')
@@ -56,7 +71,8 @@ class DatabaseAnalytics:
             fajl.write(' ' + t[0] + '      ' + t[1] + '\n')
         fajl.close()
 
-    def upisiufajlbrojilo(self, fajl, brojilo, data):
+    def upisiufajlbrojilo(self, nazivfajla, brojilo, data):
+        fajl = open(nazivfajla, 'w+')
         data = data.decode()
         fajl.write('Izvestaj za brojilo : ' + brojilo + '\n')
         fajl.write('Mesec  Potrosnja \n')

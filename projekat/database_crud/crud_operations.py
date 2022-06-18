@@ -123,30 +123,53 @@ class CrudOperations():
     # READ
     def read_brojilo_potrosnja_id(self, cnxn, value):
         cur = cnxn.cursor()
-        cur.execute(f"SELECT Ptr, Month(Datum) FROM Potrosnja WHERE Id = {value} Order by Month(Datum)")
+        try:
+            cur.execute(f"SELECT Ptr, Month(Datum) FROM Potrosnja P, Informacije I WHERE P.Id = I.Id AND I.Grad = '{value}' ORDER BY Month(Datum)")
+        except Exception:
+            return "Merenja ne postoje"
+
         items = cur.fetchall()
         response = ""
 
         if not items:
             return "Merenja ne postoje"
 
+        ptr_by_month = {}
         for ptr, mesec in items:
-            response += f"{ptr}-{self.monthsNumber[mesec]};"
+            if mesec in ptr_by_month:
+                ptr_by_month[mesec] += ptr
+            else:
+                ptr_by_month[mesec] = ptr
+
+        for i, el in enumerate(ptr_by_month):
+            response += f"{ptr_by_month[el]}-{self.monthsNumber[el]};"
 
         response = response[:-1]     
         return response
 
     def read_brojilo_potrosnja_grad(self, cnxn, value):
         cur = cnxn.cursor()
-        cur.execute(f"SELECT P.Id, Ptr, Month(Datum) FROM Potrosnja P, Informacije I WHERE P.Id = I.Id AND I.Grad = '{value}' ORDER BY Month(Datum)")
+        try:
+            cur.execute(f"SELECT Ptr, Month(Datum) FROM Potrosnja P, Informacije I WHERE P.Id = I.Id AND I.Grad = '{value}' ORDER BY Month(Datum)")
+        except Exception:
+            return "Merenja ne postoje"
+
         items = cur.fetchall()
         response = ""
 
         if not items:
             return "Merenja ne postoje"
-        
-        for id, ptr, mesec in items:
-            response += f"{id}-{ptr}-{self.monthsNumber[mesec]};"
+
+        ptr_by_month = {}
+        for ptr, mesec in items:
+            if mesec in ptr_by_month:
+                ptr_by_month[mesec] += ptr
+            else:
+                ptr_by_month[mesec] = ptr
+
+
+        for i, el in enumerate(ptr_by_month):
+            response += f"{ptr_by_month[el]}-{self.monthsNumber[el]};"
 
         response = response[:-1]
-        return response;
+        return response

@@ -97,8 +97,8 @@ class TestCrudOperations(unittest.TestCase):
         dbc = mock.MagicMock()
         crud_operations = CrudOperations()
 
-        dbc.cursor.return_value.fetchall.return_value = [(1, 220, 1), (2, 420, 5)]
-        self.assertEqual(crud_operations.read_brojilo_potrosnja_grad(dbc, "Novi Sad"), "1-220-January;2-420-May")
+        dbc.cursor.return_value.fetchall.return_value = [(220, 1), (420, 5)]
+        self.assertEqual(crud_operations.read_brojilo_potrosnja_grad(dbc, "Novi Sad"), "220-January;420-May")
 
         dbc.cursor.return_value.fetchall.return_value = []
-        self.assertEqual(crud_operations.read_brojilo_potrosnja_grad(dbc, "Trstenik"), "Merenja ne postoje")
+        self.assertEqual(crud_operations.read_brojilo_potrosnja_grad(dbc, "Trstenik"), "Error")

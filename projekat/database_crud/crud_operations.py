@@ -124,7 +124,7 @@ class CrudOperations():
     def read_brojilo_potrosnja_id(self, cnxn, value):
         cur = cnxn.cursor()
         try:
-            cur.execute(f"SELECT Ptr, Month(Datum) FROM Potrosnja P, Informacije I WHERE P.Id = I.Id AND I.Grad = '{value}' ORDER BY Month(Datum)")
+            cur.execute(f"SELECT Ptr, Month(Datum) FROM Potrosnja P WHERE Id = {value} ORDER BY Month(Datum)")
         except Exception:
             return "Merenja ne postoje"
 

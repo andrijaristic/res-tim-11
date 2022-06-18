@@ -32,7 +32,7 @@ class DatabaseAnalytics:
                 if(p=='Merenja ne postoje'):
                     print('Merenja ne postoje')
                     continue
-                nazivfajla = self.kreirajnazivfajlagrad(grad)
+                nazivfajla = self.kreiraj_naziv_fajla_grad(grad)
                 self.upisi_u_fajl_grad(nazivfajla, grad, data2)
                 print('Uspesan upis')
             elif komanda == '2':

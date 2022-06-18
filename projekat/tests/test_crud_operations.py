@@ -101,4 +101,4 @@ class TestCrudOperations(unittest.TestCase):
         self.assertEqual(crud_operations.read_brojilo_potrosnja_grad(dbc, "Novi Sad"), "220-January;420-May")
 
         dbc.cursor.return_value.fetchall.return_value = []
-        self.assertEqual(crud_operations.read_brojilo_potrosnja_grad(dbc, "Trstenik"), "Error")
+        self.assertEqual(crud_operations.read_brojilo_potrosnja_grad(dbc, "Trstenik"), "Merenja ne postoje")

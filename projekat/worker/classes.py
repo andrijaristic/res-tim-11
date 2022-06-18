@@ -15,7 +15,6 @@ class Worker:
             return False
     def connecttodatabasecrud(self,address): # pragma: no cover
         try:
-            self.database_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.database_socket.connect(address)
             return True
         except:
@@ -37,7 +36,7 @@ class Worker:
     def receivedata(self,sock):
         data = sock.recv(1024)
         return data
-    def checkdata(data):
+    def checkdata(self,data):
         s = data.decode()
         if s.count(';')==10 and s.count('-')==20:
             return True

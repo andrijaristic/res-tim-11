@@ -78,6 +78,3 @@ class TestWriter(unittest.TestCase):
         connection.recv.assert_called_with(1024)
         connection.recv.return_value = "poruka1".encode()
         self.assertAlmostEqual(writer.receive_data(connection),"poruka1".encode())
-
-if __name__ == '__main__':
-    unittest.main()

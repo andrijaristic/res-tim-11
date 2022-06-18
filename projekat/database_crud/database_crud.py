@@ -3,7 +3,6 @@ from crud_operations import CrudOperations
 from threading import Thread
 from time import sleep
 import socket
-import coverage
 
 class DatabaseCrud:
     def __init__(self):

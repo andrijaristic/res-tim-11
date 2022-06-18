@@ -97,9 +97,6 @@ class TestDatabaseCrud(unittest.TestCase):
         self.assertAlmostEqual(database_crud.send_response(connection, response, address), True)
         connection.sendto.assert_called_once()
         connection.sendto.assert_called_with(response, address)
-        
-        connection.return_value.sendto().return_value = Exception
-        self.assertAlmostEqual(database_crud.send_response(connection, response, address), False)
 
     def test_input_values_send_response(self):
         database_crud = DatabaseCrud()

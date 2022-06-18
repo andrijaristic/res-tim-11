@@ -76,12 +76,12 @@ class TestCrudOperations(unittest.TestCase):
         dbc = self.set_dbc(None)
         crud_operations = CrudOperations()
 
-        self.assertEqual(crud_operations.create_brojilo_potrosnja(dbc, 1, 220, "01.01.2000"), True)
-        dbc.cursor().execute.assert_called_with("INSERT INTO Potrosnja VALUES (1, 220, '2000-01-01')")
+        self.assertEqual(crud_operations.create_brojilo_potrosnja(dbc, 1, 220, "01.01.2000?11:10:59"), True)
+        dbc.cursor().execute.assert_called_with("INSERT INTO Potrosnja VALUES (1, 220, '2000-01-01 11:10:59')")
 
         dbc.cursor.return_value.fetchone.return_value = 1
-        self.assertEqual(crud_operations.create_brojilo_potrosnja(dbc, 1, 220, "01.01.2000"), False)
-        dbc.cursor().execute.assert_called_with("SELECT * FROM Potrosnja WHERE Id = 1 AND Datum = '2000-01-01'")
+        self.assertEqual(crud_operations.create_brojilo_potrosnja(dbc, 1, 220, "01.01.2000?11:10:59"), False)
+        dbc.cursor().execute.assert_called_with("SELECT * FROM Potrosnja WHERE Id = 1 AND Datum = '2000-01-01 11:10:59'")
 
     def test_read_brojilo_potrosnja_id(self):
         dbc = mock.MagicMock()

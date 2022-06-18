@@ -95,18 +95,25 @@ class CrudOperations():
             return False      
 
 
-    def create_brojilo_potrosnja(self, cnxn, id, potrosnja, datum):
+    def create_brojilo_potrosnja(self, cnxn, id, potrosnja, datum_vreme):
         cur = cnxn.cursor()
 
+        datum = datum_vreme.split('?')[0]
+        vreme = datum_vreme.split('?')[1]
+        
         dan = datum.split('.')[0]
         mesec = datum.split('.')[1]
         godina = datum.split('.')[2]
 
-        cur.execute(f"SELECT * FROM Potrosnja WHERE Id = {id} AND Datum = '{godina}-{mesec}-{dan}'")
+        sat = vreme.split(':')[0]
+        minut = vreme.split(':')[1]
+        sekunda = vreme.split(':')[2]
+
+        cur.execute(f"SELECT * FROM Potrosnja WHERE Id = {id} AND Datum = '{godina}-{mesec}-{dan} {sat}:{minut}:{sekunda}'")
         num = cur.fetchone()
         if num == None:
             try:
-                cur.execute(f"INSERT INTO Potrosnja VALUES ({id}, {potrosnja}, '{godina}-{mesec}-{dan}')")
+                cur.execute(f"INSERT INTO Potrosnja VALUES ({id}, {potrosnja}, '{godina}-{mesec}-{dan} {sat}:{minut}:{sekunda}')")
                 cnxn.commit()
                 return True
             except Exception as ex:

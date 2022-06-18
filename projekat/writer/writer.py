@@ -7,7 +7,7 @@ class Writer:
         sock.connect(adresa)
         return sock
 
-    def run(self, socket):
+    def run(self, socket):  # pragma: no cover
         while(True):                                    
             komanda = self.get_input("1 - Slanje podataka\n2 - Paljenje Worker komponente\n3 - Gasenje Worker komponente\n4 - Zatvaranje konekcije\nOdaberite komandu: ")
             poruka = self.switch_komanda(komanda)               
@@ -19,21 +19,39 @@ class Writer:
             raise TypeError("Poruka treba da bude string!")
         try:
             if(poruka):                                               
-                poruka = poruka.encode()
-                socket.sendall(poruka)
-                odgovor = socket.recv(1024)
+                self.send_message(poruka, socket)
+                odgovor = self.receive_data(socket)
                 if(odgovor):
                     poruka = odgovor.decode()
                     print(poruka)
                 else:
-                    socket.close()
+                    self.close_socket(socket)
                 return True
             else:
                 return False
         except:
             print("Greska!")
             return False
-                
+    
+    def receive_data(self,socket):
+        return socket.recv(1024)
+
+    def close_socket(self,socket):
+        try:          
+            socket.close()
+            return True
+        except:
+            return False
+
+    def send_message(self, poruka, socket):
+        if(type(poruka) != str):
+            raise TypeError("Poruka treba da bude string")
+        try:
+            poruka = poruka.encode()
+            socket.sendall(poruka)
+            return True
+        except:
+            return False
 
     def switch_komanda(self, komanda):
         if(type(komanda) != int):
@@ -64,7 +82,7 @@ class Writer:
             raise TypeError("Vrednost nije int!")
         try:                   
             e = datetime.datetime.now()
-            datum_vreme = e.strftime("%d.%m.%Y;%H:%M:%S")
+            datum_vreme = e.strftime("%d.%m.%Y?%H:%M:%S")
             return "Send-" + str(id) + "-" + str(value) + "-" + str(datum_vreme)       
         except:
             print("Greska!")

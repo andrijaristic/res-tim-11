@@ -36,7 +36,7 @@ class Worker:
         return data
     def check_data(self,data):
         s = data.decode()
-        if s.count(';')==10 and s.count('-')==20:
+        if s.count(';')==9 and s.count('-')==20:
             return True
         else:
             raise TypeError("Wrong format!")

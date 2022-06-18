@@ -1,19 +1,17 @@
 import socket
-from time import sleep
-from tkinter.tix import Tree
 
 
 class Worker:
     def __init__(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.database_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    def connecttoloadbalancer(self,address): # pragma: no cover
+    def connect_to_load_balancer(self,address): # pragma: no cover
         try:
             self.server_socket.connect(address)
             return True
         except:
             return False
-    def connecttodatabasecrud(self,address): # pragma: no cover
+    def connect_to_databasecrud(self,address): # pragma: no cover
         try:
             self.database_socket.connect(address)
             return True
@@ -21,22 +19,22 @@ class Worker:
             return False
     def run(self): # pragma: no cover
         while True:
-            data = self.receivedata(self.server_socket)
+            data = self.receive_data(self.server_socket)
             if data:
-                self.checkdata(data)
+                self.check_data(data)
                 self.database_socket.sendall(data)
-                self.send('Upesno slanje',self.database_socket)
-                data2 = self.receivereply(self.database_socket)
+                self.send('Upesno slanje',self.server_socket)
+                data2 = self.receive_reply(self.database_socket)
                 if data2:
                     print(data2)
                 else:
                     exit()
             else:
                 exit()
-    def receivedata(self,sock):
+    def receive_data(self,sock):
         data = sock.recv(1024)
         return data
-    def checkdata(self,data):
+    def check_data(self,data):
         s = data.decode()
         if s.count(';')==10 and s.count('-')==20:
             return True
@@ -49,7 +47,7 @@ class Worker:
             return True
         except:
             return False
-    def receivereply(self,sock):
+    def receive_reply(self,sock):
         data = sock.recv(1024)
         return data
 

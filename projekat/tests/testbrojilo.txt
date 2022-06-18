@@ -1,0 +1,5 @@
+Izvestaj za brojilo : 1
+Mesec  Potrosnja 
+ 1      1
+ 2      2
+ 3      3

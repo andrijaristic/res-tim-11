@@ -8,7 +8,7 @@ class TestWorker(unittest.TestCase):
     def test_check_data(self):
         worker = Worker()
         self.assertRaises(TypeError,worker.check_data,"sadsad".encode())
-        data = worker.check_data(("10-10-10;10-10-10;10-10-10;10-10-10;10-10-10;10-10-10;10-10-10;10-10-10;10-10-10;10-10-10;".encode()))
+        data = worker.check_data(("10-10-10;10-10-10;10-10-10;10-10-10;10-10-10;10-10-10;10-10-10;10-10-10;10-10-10;10-10-10".encode()))
         self.assertTrue(data,'Greska')
     def test_receive_data(self):
         worker = Worker()

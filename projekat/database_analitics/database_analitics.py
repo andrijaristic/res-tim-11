@@ -4,13 +4,13 @@ import socket
 class DatabaseAnalytics:
     def __init__(self):
         self.databasecrud_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    def connecttodatabasecrud(self,databasecrud_address): # pragma: no cover 
+    def connect_to_databasecrud(self,databasecrud_address): # pragma: no cover 
         try:
             self.databasecrud_socket.connect(databasecrud_address)
             return True
         except:
             return False
-    def kreirajnazivfajlagrad(self,nazivgrada):
+    def kreiraj_naziv_fajla_grad(self,nazivgrada):
         x = nazivgrada.split(' ')
         naziv = ''
         for n in x:
@@ -33,7 +33,7 @@ class DatabaseAnalytics:
                     print('Merenja ne postoje')
                     continue
                 nazivfajla = self.kreirajnazivfajlagrad(grad)
-                self.upisiufajlgrad(nazivfajla, grad, data2)
+                self.upisi_u_fajl_grad(nazivfajla, grad, data2)
                 print('Uspesan upis')
             elif komanda == '2':
                 print('Unesite brojilo:')
@@ -47,7 +47,7 @@ class DatabaseAnalytics:
                     print('Merenja ne postoje')
                     continue
                 nazivfajla = 'izvestaj' + brojilo + '.txt'
-                self.upisiufajlbrojilo(nazivfajla, brojilo, data2)
+                self.upisi_u_fajl_brojilo(nazivfajla, brojilo, data2)
                 print('Uspesan upis')
             elif komanda == '3':
                 exit()
@@ -60,7 +60,7 @@ class DatabaseAnalytics:
         print('2 - Izvestaj o potrosnji po mesecima za odredjeno brojilo')
         print('3 - Izlaz')
 
-    def upisiufajlgrad(self, nazivfajla, grad, data): 
+    def upisi_u_fajl_grad(self, nazivfajla, grad, data): 
         fajl = open(nazivfajla, 'w+')
         data = data.decode()
         fajl.write('Izvestaj za grad : ' + grad + '\n')
@@ -71,7 +71,7 @@ class DatabaseAnalytics:
             fajl.write(' ' + t[0] + '      ' + t[1] + '\n')
         fajl.close()
 
-    def upisiufajlbrojilo(self, nazivfajla, brojilo, data):
+    def upisi_u_fajl_brojilo(self, nazivfajla, brojilo, data):
         fajl = open(nazivfajla, 'w+')
         data = data.decode()
         fajl.write('Izvestaj za brojilo : ' + brojilo + '\n')

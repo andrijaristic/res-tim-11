@@ -19,13 +19,14 @@ class Writer:
             raise TypeError("Poruka treba da bude string!")
         try:
             if(poruka):                                               
-                self.send_message(poruka, socket)
+                self.send_nesto(poruka, socket)
                 odgovor = self.receive_data(socket)
                 if(odgovor):
                     poruka = odgovor.decode()
                     print(poruka)
                 else:
                     self.close_socket(socket)
+                    exit()
                 return True
             else:
                 return False
@@ -43,7 +44,7 @@ class Writer:
         except:
             return False
 
-    def send_message(self, poruka, socket):
+    def send_nesto(self, poruka, socket):
         if(type(poruka) != str):
             raise TypeError("Poruka treba da bude string")
         try:

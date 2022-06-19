@@ -66,8 +66,7 @@ class TestWriter(unittest.TestCase):
         connection = Mock()       
         self.assertAlmostEqual(writer.close_socket(connection),True)
         connection.close.assert_called_once()
-        connection.close.assert_called_with()
-        self.assertAlmostEqual(writer.close_socket("connection"),False)
+        connection.close.assert_called_with()       
 
     def test_receive_data(self):
         writer = Writer()
@@ -78,3 +77,10 @@ class TestWriter(unittest.TestCase):
         connection.recv.assert_called_with(1024)
         connection.recv.return_value = "poruka1".encode()
         self.assertAlmostEqual(writer.receive_data(connection),"poruka1".encode())
+
+    @patch('builtins.input')
+    def test_get_input(self, mock_input):
+        writer = Writer()
+        err = ValueError('Ovo je exception')
+        mock_input.side_effect = err
+        self.assertAlmostEqual(writer.get_input("input"), False)

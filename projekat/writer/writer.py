@@ -12,10 +12,11 @@ class Writer:
             try:                                   
                 komanda = self.get_input("1 - Slanje podataka\n2 - Paljenje Worker komponente\n3 - Gasenje Worker komponente\n4 - Zatvaranje konekcije\nOdaberite komandu: ")
                 poruka = self.switch_komanda(komanda)               
-                self.send_message(poruka, socket)
+                if(self.send_message(poruka, socket) == False):
+                    break
             except:
-                 print("Greska!")      
-
+                 print("Greska!")
+                 exit()      
 
     def send_message(self ,poruka, socket):
         if(type(poruka) != str):
@@ -28,7 +29,7 @@ class Writer:
                 print(poruka)
             else:
                 self.close_socket(socket)
-                exit()
+                return False
             return True
         else:
             return False       
@@ -40,7 +41,6 @@ class Writer:
             socket.close()
             return True
         
-
     def send_nesto(self, poruka, socket):
         if(type(poruka) != str):
             raise TypeError("Poruka treba da bude string")       
@@ -69,7 +69,6 @@ class Writer:
             print("Zadata komanda ne postoji!")
             return False
 
-
     def format_message(self, id, value):
         if(type(id) != int):
             raise TypeError("ID nije int!")
@@ -79,10 +78,12 @@ class Writer:
         datum_vreme = e.strftime("%d.%m.%Y?%H:%M:%S")
         return "Send-" + str(id) + "-" + str(value) + "-" + str(datum_vreme)       
         
-
-
     def get_input(self, text):
         if(type(text) != str):
             raise TypeError("Text treba da bude string!")       
-        return int(input(text))
+        try:
+            return int(input(text))
+        except ValueError:
+            print("Greska. Vrednosti moraju biti celobrojne.")
+            return False
        

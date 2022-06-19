@@ -1,6 +1,6 @@
 class CrudOperations():
     def __init__(self):
-        self.monthsName = {
+        self.months_name = {
             "January" : 1,
             "February" : 2,
             "March" : 3,
@@ -15,7 +15,7 @@ class CrudOperations():
             "December" : 12    
         }
 
-        self.monthsNumber = {
+        self.months_number = {
             1 : "January",
             2 : "February",
             3 : "March",
@@ -142,7 +142,7 @@ class CrudOperations():
                 ptr_by_month[mesec] = ptr
 
         for i, el in enumerate(ptr_by_month):
-            response += f"{ptr_by_month[el]}-{self.monthsNumber[el]};"
+            response += f"{ptr_by_month[el]}-{self.months_number[el]};"
 
         response = response[:-1]     
         return response
@@ -169,7 +169,7 @@ class CrudOperations():
 
 
         for i, el in enumerate(ptr_by_month):
-            response += f"{ptr_by_month[el]}-{self.monthsNumber[el]};"
+            response += f"{ptr_by_month[el]}-{self.months_number[el]};"
 
         response = response[:-1]
         return response

@@ -1,6 +1,7 @@
 from json import load
 from load_balancer import LoadBalancer
 from threading import Thread
+import socket
 
 if __name__ == '__main__':
     try:
@@ -12,10 +13,12 @@ if __name__ == '__main__':
         worker_availabilty = []
         load_balancer = LoadBalancer()
         client_socket = load_balancer.create_socket(server_client_address)
+        client_socket.listen(1)
         new_thread = Thread(target=load_balancer.start_listening_clients, args=(client_socket,client_connections,local_buffer,worker_connections,worker_availabilty))
         new_thread.daemon = True
         new_thread.start()
         worker_socket = load_balancer.create_socket(server_worker_address)
+        worker_socket.listen(1)
         worker_thread = Thread(target=load_balancer.start_listening_workers, args=(worker_socket,worker_connections,worker_availabilty))
         worker_thread.daemon = True
         worker_thread.start()

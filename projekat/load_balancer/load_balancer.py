@@ -13,7 +13,6 @@ class LoadBalancer:
     def create_socket(self,adresa):
         sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         sock.bind(adresa)
-        sock.listen(1)
         return sock
 
     def start_listening_clients(self,client_socket,client_connections,local_buffer,worker_connections,worker_availabilty): # pragma: no cover

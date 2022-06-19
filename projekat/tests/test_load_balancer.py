@@ -132,10 +132,13 @@ class TestLoadBalancer(unittest.TestCase):
         load_balancer = LoadBalancer()
         adresa = ('localhost',40000)
         connection = Mock()
+        err = Exception('Ovo je exception')
         data = "poruka".encode()
         self.assertAlmostEqual(load_balancer.send_reply_to_client(connection,adresa,data),True)
         connection.sendto.assert_called_once()
         connection.sendto.assert_called_with(data,adresa)
+        connection.sendto.side_effect = err
+        self.assertAlmostEqual(load_balancer.send_reply_to_client(connection, adresa,data), False)
 
     def test_input_values_send_reply_to_client(self):
         load_balancer = LoadBalancer()

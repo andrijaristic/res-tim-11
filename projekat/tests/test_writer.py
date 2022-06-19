@@ -53,13 +53,20 @@ class TestWriter(unittest.TestCase):
         
     def test_input_values_send_message(self):
         writer = Writer()
-        self.assertRaises(TypeError, writer.send_message,5)
-        self.assertRaises(TypeError, writer.send_message,True)
+        self.assertRaises(TypeError, writer.send_message,5,5)
+        self.assertRaises(TypeError, writer.send_message,True,False)
+
+    def test_input_values_send_nesto(self):
+        writer = Writer()
+        self.assertRaises(TypeError, writer.send_nesto,5,5)
+        self.assertRaises(TypeError, writer.send_nesto,True,False)
 
     def test_send_message(self):
         writer = Writer()
         connection = Mock()
         self.assertAlmostEqual(writer.send_message("poruka", connection), True)
+        connection.recv.return_value = None
+        self.assertAlmostEqual(writer.send_message("poruka", connection), False)
        
     def test_close_socket(self):
         writer = Writer()

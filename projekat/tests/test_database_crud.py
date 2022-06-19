@@ -4,7 +4,7 @@ import sys
 sys.path.append('./')
 import socket
 import unittest
-from unittest import mock
+from unittest import expectedFailure, mock
 from unittest.mock import Mock, patch
 from database_crud.database_crud import DatabaseCrud
 
@@ -98,6 +98,10 @@ class TestDatabaseCrud(unittest.TestCase):
         connection.sendto.assert_called_once()
         connection.sendto.assert_called_with(response, address)
 
+        err = Exception('Ovo je exception')
+        connection.sendto.side_effect = err
+        self.assertAlmostEqual(database_crud.send_response(connection, response, address), False)
+
     def test_input_values_send_response(self):
         database_crud = DatabaseCrud()
         self.assertRaises(TypeError, database_crud.send_response, 1, "test", 1)
@@ -111,3 +115,7 @@ class TestDatabaseCrud(unittest.TestCase):
         self.assertAlmostEqual(database_crud.close_connection(connection), True)
         connection.close.assert_called_once()
         connection.close.assert_called_with()
+
+        err = Exception('Ovo je exception')
+        connection.close.side_effect = err
+        self.assertAlmostEqual(database_crud.close_connection(connection), False)

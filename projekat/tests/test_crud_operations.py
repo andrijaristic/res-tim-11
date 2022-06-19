@@ -52,6 +52,11 @@ class TestCrudOperations(unittest.TestCase):
         self.assertRaises(Exception, crud_operations.delete_brojilo_info(dbc, 10))
         dbc.cursor().execute.assert_called_with('DELETE FROM Informacije WHERE Id = 10')
 
+        err = Exception('Ovo je exception')
+        dbc.cursor().execute.side_effect = [1, err]
+        self.assertAlmostEqual(crud_operations.delete_brojilo_info(dbc, 1), False)
+
+
     def test_update_brojilo_info(self):
         dbc = self.set_dbc(1)   
         crud_operations = CrudOperations()
@@ -83,6 +88,11 @@ class TestCrudOperations(unittest.TestCase):
         self.assertEqual(crud_operations.create_brojilo_potrosnja(dbc, 1, 220, "01.01.2000?11:10:59"), False)
         dbc.cursor().execute.assert_called_with("SELECT * FROM Potrosnja WHERE Id = 1 AND Datum = '2000-01-01 11:10:59'")
 
+        err = Exception('Ovo je exception')
+        dbc.cursor.return_value.fetchone.return_value = None
+        dbc.cursor().execute.side_effect = [1, err]
+        self.assertAlmostEqual(crud_operations.create_brojilo_potrosnja(dbc, 1, 220, "01.01.2000?11:10:59"), False)
+
     def test_read_brojilo_potrosnja_id(self):
         dbc = mock.MagicMock()
         crud_operations = CrudOperations()
@@ -93,6 +103,10 @@ class TestCrudOperations(unittest.TestCase):
         dbc.cursor.return_value.fetchall.return_value = []
         self.assertEqual(crud_operations.read_brojilo_potrosnja_id(dbc, 1), "Merenja ne postoje")
 
+        err = Exception('Ovo je exception')
+        dbc.cursor().execute.side_effect = err
+        self.assertAlmostEqual(crud_operations.read_brojilo_potrosnja_id(dbc, 1), "Merenja ne postoje")
+
     def test_read_brojilo_potrosnja_grad(self):
         dbc = mock.MagicMock()
         crud_operations = CrudOperations()
@@ -102,3 +116,7 @@ class TestCrudOperations(unittest.TestCase):
 
         dbc.cursor.return_value.fetchall.return_value = []
         self.assertEqual(crud_operations.read_brojilo_potrosnja_grad(dbc, "Trstenik"), "Merenja ne postoje")
+
+        err = Exception('Ovo je exception')
+        dbc.cursor().execute.side_effect = err
+        self.assertAlmostEqual(crud_operations.read_brojilo_potrosnja_grad(dbc, 1), "Merenja ne postoje")

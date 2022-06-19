@@ -19,12 +19,12 @@ class TestWorker(unittest.TestCase):
         connection.recv.assert_called_with(1024)
         connection.recv.return_value = "poruka".encode()
         self.assertAlmostEqual(worker.receive_data(connection),"poruka".encode())
-    def test_send(self):
+    def test_send_m(self):
         worker = Worker()
         adresa = ('localhost',25000)
         connection = Mock()
         data = 'poruka'
-        self.assertAlmostEqual(worker.send(data,connection),True)
+        self.assertAlmostEqual(worker.send_m(data,connection),True)
         connection.sendall.assert_called_once()
     def test_receive_reply(self):
         worker = Worker()

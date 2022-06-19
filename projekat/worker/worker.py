@@ -23,7 +23,7 @@ class Worker:
             if data:
                 self.check_data(data)
                 self.database_socket.sendall(data)
-                self.send('Upesno slanje',self.server_socket)
+                self.send_m('Upesno slanje',self.server_socket)
                 data2 = self.receive_reply(self.database_socket)
                 if data2:
                     print(data2)
@@ -40,13 +40,10 @@ class Worker:
             return True
         else:
             raise TypeError("Wrong format!")
-    def send(self,message,sock):
-        try:
-            message = message.encode()
-            sock.sendall(message)
-            return True
-        except:
-            return False
+    def send_m(self,message,sock):
+        message = message.encode()
+        sock.sendall(message)
+        return True
     def receive_reply(self,sock):
         data = sock.recv(1024)
         return data

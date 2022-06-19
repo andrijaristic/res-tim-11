@@ -44,7 +44,7 @@ class DatabaseCrud:
                 for message in buffer:
                     id, value, date = self.get_params_from_worker_message(message)
                     self.crud_operations.create_brojilo_potrosnja(cnxn, id, value, date)
-                    sleep(0.2)
+                    sleep(1)
             else:
                 connection_closed = self.close_connection(connection)
                 if (connection_closed):

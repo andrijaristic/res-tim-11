@@ -184,9 +184,9 @@ class TestLoadBalancer(unittest.TestCase):
 
     def test_input_values_turn_off_worker(self):
         load_balancer = LoadBalancer()
-        self.assertRaises(TypeError,load_balancer.turn_off_worker,"asdf")
-        self.assertRaises(TypeError,load_balancer.turn_off_worker,True)
-        self.assertRaises(TypeError,load_balancer.turn_off_worker,1.5)
+        self.assertRaises(TypeError,load_balancer.turn_off_worker,"asdf",1,1)
+        self.assertRaises(TypeError,load_balancer.turn_off_worker,True,1,1)
+        self.assertRaises(TypeError,load_balancer.turn_off_worker,1.5,1,1)
 
     def test_input_values_check_data_for_sending(self):
         load_balancer = LoadBalancer()
